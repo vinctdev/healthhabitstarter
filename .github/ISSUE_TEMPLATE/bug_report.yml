@@ -1,0 +1,39 @@
+name: Bug report
+description: Something does not work as described.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the Food tab
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Image tag, or the version from /api/health.
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: setup
+    attributes:
+      label: Setup
+      description: Docker Compose or native, HEALTH_PROVIDER, AI enabled or not, browser.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Backend logs or browser console errors. Remove personal data first.
+      render: text

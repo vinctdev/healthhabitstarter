@@ -1,0 +1,78 @@
+# Health Habit Starter: frontend (nginx) → backend (FastAPI) → database (PostgreSQL).
+#
+#   cp .env.example .env    # set DB_PASSWORD, TZ and optional keys
+#   docker compose pull && docker compose up -d    # prebuilt images from GHCR
+#   docker compose up -d --build                   # or build from your (customized) source
+#
+# The app has no login. By default it is only reachable from this machine (http://localhost:8080).
+# To reach it from other devices, use a VPN or a reverse proxy with authentication: docs/deployment.md
+
+name: healthhabitstarter
+
+services:
+  frontend:
+    image: ghcr.io/vinctdev/healthhabitstarter-frontend:latest
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - web
+    depends_on:
+      backend:
+        condition: service_healthy
+        restart: true # nginx resolves "backend" only at startup: restart when the backend is recreated
+
+  backend:
+    image: ghcr.io/vinctdev/healthhabitstarter-backend:latest
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - ENVIRONMENT=production
+      - DB_HOST=database
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - web
+      - db
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-healthhabitstarter}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?set DB_PASSWORD in .env}
+      - POSTGRES_DB=${DB_NAME:-healthhabitstarter}
+    volumes:
+      - db_data:/var/lib/postgresql  # PostgreSQL 18+ keeps its data in a versioned subdirectory
+    networks:
+      - db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  web:
+  db:
+    internal: true  # the database is not reachable from outside, only from the backend
+
+volumes:
+  db_data:

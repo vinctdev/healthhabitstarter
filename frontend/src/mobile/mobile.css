@@ -1,0 +1,1128 @@
+/* ============================================================
+   Mobile view (< 640 px)
+   Applies only below 640 px and only with data-mobile="on".
+   Palette and typography come unchanged from the "original" design.
+
+   Tables are turned into cards via CSS for the mobile view;
+   the desktop table markup stays unchanged.
+   ============================================================ */
+
+@media (max-width: 639px) {
+  html[data-mobile="on"] {
+    zoom: 1;
+  }
+
+  html[data-mobile="on"] body {
+    min-height: 100dvh;
+    overflow-x: clip;
+    overscroll-behavior-y: contain;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* --- Base layout ----------------------------------------------------- */
+
+  html[data-mobile="on"] .mobile-content {
+    position: relative;
+    z-index: auto;
+    padding: calc(12px + env(safe-area-inset-top)) 12px calc(98px + env(safe-area-inset-bottom));
+  }
+
+  html[data-mobile="on"] .mobile-content[data-view="ai"] {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  html[data-mobile="on"] .mobile-icon-button {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+  }
+
+  /* Slightly more compact cards so more content fits on 360 px. */
+  html[data-mobile="on"] [class~="backdrop-blur-2xl"] {
+    padding: 14px;
+    backdrop-filter: blur(14px) saturate(1.15);
+  }
+
+  /* iOS auto-zooms into inputs with a font size below 16 px. */
+  html[data-mobile="on"] input,
+  html[data-mobile="on"] select,
+  html[data-mobile="on"] textarea {
+    font-size: 16px !important;
+  }
+
+  /* Make very small labels a bit more readable. */
+  html[data-mobile="on"] [data-view] [class~="text-[9px]"],
+  html[data-mobile="on"] [data-view] [class~="text-[9.5px]"] {
+    font-size: 10px !important;
+  }
+
+  /* --- Bottom navigation ------------------------------------------------ */
+
+  .mobile-nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-top: 1px solid var(--ui-border);
+    background: var(--ui-surface);
+    box-shadow: 0 -10px 32px rgba(0, 0, 0, 0.45);
+  }
+
+  .mobile-nav-inner {
+    display: grid;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .mobile-nav-item {
+    position: relative;
+    display: flex;
+    min-height: 60px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: 0;
+    background: transparent;
+    padding: 7px 2px 5px;
+    color: var(--ui-text-3);
+    transition: color 0.15s ease;
+  }
+
+  .mobile-nav-item:active {
+    color: var(--ui-text-2);
+  }
+
+  .mobile-nav-item[data-active="true"] {
+    color: var(--ui-accent);
+  }
+
+  .mobile-nav-indicator {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 28px;
+    height: 2px;
+    transform: translateX(-50%);
+    border-radius: 9999px;
+    background: transparent;
+  }
+
+  .mobile-nav-item[data-active="true"] .mobile-nav-indicator {
+    background: var(--ui-accent);
+    box-shadow: 0 0 8px rgba(var(--ui-accent-rgb), 0.55);
+  }
+
+  .mobile-nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mobile-nav-label {
+    font-family: var(--ui-font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .mobile-nav-dot {
+    position: absolute;
+    top: -2px;
+    right: -5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--ui-accent);
+    box-shadow: 0 0 6px rgba(var(--ui-accent-rgb), 0.7);
+  }
+
+  /* --- More sheet ------------------------------------------------------- */
+
+  .more-sheet-root {
+    position: fixed;
+    inset: 0;
+    z-index: 46;
+    visibility: hidden;
+    pointer-events: none;
+    transition: visibility 0s linear 0.24s;
+  }
+
+  .more-sheet-root.is-open {
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  .more-sheet-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.62);
+    transition: opacity 0.2s ease;
+  }
+
+  .more-sheet-root.is-open .more-sheet-backdrop {
+    opacity: 1;
+  }
+
+  .more-sheet {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    max-height: 88dvh;
+    overflow-y: auto;
+    padding: 8px 16px calc(20px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--ui-border);
+    border-radius: 24px 24px 0 0;
+    background: var(--ui-surface);
+    box-shadow: 0 -18px 48px rgba(0, 0, 0, 0.55);
+    transform: translateY(105%);
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .more-sheet-root.is-open .more-sheet {
+    transform: translateY(0);
+  }
+
+  .more-sheet-handle {
+    width: 38px;
+    height: 4px;
+    margin: 2px auto 12px;
+    border-radius: 9999px;
+    background: var(--ui-border-strong);
+  }
+
+  .more-sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .more-sheet-eyebrow {
+    margin: 0;
+    color: var(--ui-text-3);
+    font-family: var(--ui-font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .more-sheet-title {
+    margin: 2px 0 0;
+    color: var(--ui-text);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .more-sheet-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .more-sheet-item {
+    display: flex;
+    width: 100%;
+    min-height: 60px;
+    align-items: center;
+    gap: 12px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    padding: 10px 12px;
+    text-align: left;
+    transition: background 0.15s ease;
+  }
+
+  .more-sheet-item:active {
+    background: rgba(var(--ui-accent-rgb), 0.08);
+  }
+
+  .more-sheet-item[data-active="true"] {
+    background: rgba(var(--ui-accent-rgb), 0.1);
+  }
+
+  .more-sheet-item[data-active="true"] .more-sheet-item-label {
+    color: var(--ui-accent);
+  }
+
+  .more-sheet-item-icon {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(var(--ui-accent-rgb), 0.12);
+    color: var(--ui-accent);
+  }
+
+  .more-sheet-item-text {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .more-sheet-item-label {
+    color: var(--ui-text);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .more-sheet-item-description {
+    color: var(--ui-text-3);
+    font-family: var(--ui-font-mono);
+    font-size: 10.5px;
+  }
+
+  .more-sheet-divider {
+    height: 1px;
+    margin: 12px 0 6px;
+    background: var(--ui-border);
+  }
+
+  .more-sheet .mobile-icon-button {
+    color: var(--ui-text-2);
+  }
+
+  .more-sheet-settings {
+    display: flex;
+    width: 100%;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+    border: 1px dashed var(--ui-border-strong);
+    border-radius: 14px;
+    background: transparent;
+    color: var(--ui-text-2);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* --- Modals as bottom sheets ----------------------------------------- */
+
+  html[data-mobile="on"] div[class~="fixed"][class~="inset-0"][class~="z-50"] {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  html[data-mobile="on"] div[class~="fixed"][class~="inset-0"][class~="z-50"] > div {
+    width: 100%;
+    max-width: none;
+    max-height: 92dvh;
+    margin: 0;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+
+  /* --- Touch targets ---------------------------------------------------- */
+
+  html[data-mobile="on"] [data-view] button[class~="rounded-full"][class~="p-2"] {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  html[data-mobile="on"] [data-view] button[class~="rounded-full"][class~="p-2"] svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  html[data-mobile="on"] [data-view] button[class~="p-1.5"] {
+    display: inline-flex;
+    min-width: 40px;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  html[data-mobile="on"] [data-view] button[class~="p-1"] {
+    display: inline-flex;
+    min-width: 36px;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  html[data-mobile="on"] [data-view] button[class~="py-3"] {
+    min-height: 44px;
+  }
+
+  /* --- Day navigation (Food / Supplements / Performance) --------------- */
+
+  html[data-mobile="on"]
+    [data-view]
+    div[class~="flex"][class~="items-center"][class~="gap-1"]:has(> span[class~="min-w-[120px]"]) {
+    width: 100%;
+    gap: 4px;
+  }
+
+  html[data-mobile="on"] [data-view] span[class~="min-w-[120px]"] {
+    min-width: 0;
+    flex: 1;
+    font-size: 13px;
+  }
+
+  html[data-mobile="on"]
+    [data-view]
+    div[class~="flex"][class~="items-center"][class~="gap-1"]
+    button[class~="px-3"][class~="py-1"] {
+    min-height: 36px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  /* --- Main tab --------------------------------------------------------- */
+
+  /* The ticker is not rendered at all. The motivation card stays, but compact. */
+  html[data-mobile="on"] [data-view="main"] [class~="font-serif"] {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  html[data-mobile="on"] [data-view="main"] div:has(> svg[viewBox="0 0 120 120"]) {
+    width: 128px;
+    height: 128px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="main"]
+    div:has(> svg[viewBox="0 0 120 120"])
+    span[style*="font-size"] {
+    font-size: 30px !important;
+  }
+
+  html[data-mobile="on"]
+    [data-view="main"]
+    [class~="mb-6"][class~="flex-col"][class~="items-center"] {
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+
+  html[data-mobile="on"] [data-view="main"] [class~="my-5"][class~="grid-cols-3"] > button {
+    padding: 10px 6px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="main"]
+    [class~="flex-wrap"][class~="items-center"][class~="gap-3"]
+    > input[type="text"] {
+    flex: 1 0 100%;
+  }
+
+  html[data-mobile="on"]
+    [data-view="main"]
+    [class~="flex-wrap"][class~="items-center"][class~="gap-3"]
+    > input[type="date"] {
+    width: auto;
+    min-width: 0;
+    flex: 1 1 130px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="main"]
+    [class~="flex-wrap"][class~="items-center"][class~="gap-3"]
+    > button[class~="rounded-full"] {
+    min-height: 44px;
+    flex: 1 1 auto;
+  }
+
+  /* Drag and drop does not work on touch → hide the handle. */
+  html[data-mobile="on"] [data-view="main"] [class~="w-[14px]"][class~="cursor-grab"] {
+    display: none;
+  }
+
+  html[data-mobile="on"] [data-view="main"] button[class~="h-[22px]"][class~="w-[22px]"] {
+    width: 28px;
+    height: 28px;
+  }
+
+  html[data-mobile="on"] [data-view="main"] [class~="bg-white/[0.035]"] > button,
+  html[data-mobile="on"] [data-view="main"] button[class~="cursor-pointer"][class~="opacity-50"] {
+    display: inline-flex;
+    min-width: 40px;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  html[data-mobile="on"]
+    [data-view="main"]
+    [class~="mt-2"][class~="justify-between"][class~="font-mono"]
+    > span:first-child {
+    display: none;
+  }
+
+  /* Daily goals already show the due date in the card header. */
+  html[data-mobile="on"]
+    [data-view="main"]
+    span[class~="truncate"][class~="font-mono"][class~="text-[10px]"] {
+    display: none;
+  }
+
+  /* Goal texts may wrap on phones instead of being truncated. */
+  html[data-mobile="on"] [data-view="main"] span[class~="truncate"][class~="text-sm"] {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  /* --- Food tab --------------------------------------------------------- */
+
+  /* Entry modes as a 2×2 grid. */
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="flex"][class~="gap-3"]:has(> button[class~="flex-col"]) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Nutrient fields in the form: 2 instead of 3 columns. */
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="space-y-4"]
+    > div[class~="grid"][class~="grid-cols-3"]:has(input) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html[data-mobile="on"] [data-view="food"] button[class~="px-5"] {
+    min-height: 44px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="mb-4"][class~="flex-wrap"][class~="items-center"]
+    > button {
+    min-height: 36px;
+  }
+
+  /* Entry: two-line card with visible actions. */
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"] {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "emoji name name kcal"
+      "emoji time amount actions";
+    align-items: center;
+    gap: 2px 8px;
+    border-radius: 10px;
+    background: rgba(var(--ui-accent-rgb), 0.04);
+    padding: 10px 12px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"]
+    > span:nth-child(1) {
+    grid-area: emoji;
+    align-self: start;
+    font-size: 20px;
+    line-height: 1.1;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"]
+    > span:nth-child(2) {
+    grid-area: time;
+    align-self: center;
+    font-size: 10px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"]
+    > span[class~="max-w-52"] {
+    grid-area: name;
+    max-width: none;
+    overflow: visible;
+    font-size: 13px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"]
+    > span[class~="text-[10px]"][class~="text-dash-tertiary"]:not([class~="tabular-nums"]) {
+    grid-area: amount;
+    align-self: center;
+    font-size: 10px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"]
+    > span[class~="tabular-nums"][class~="text-dash-secondary"] {
+    grid-area: kcal;
+    align-self: center;
+    justify-self: end;
+    color: var(--ui-text);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"]
+    > div[class~="flex-1"] {
+    display: none;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"]
+    > div[class~="opacity-0"] {
+    grid-area: actions;
+    align-self: center;
+    justify-self: end;
+    gap: 0;
+    opacity: 1 !important;
+  }
+
+  html[data-mobile="on"]
+    [data-view="food"]
+    div[class~="group"][class~="flex"][class~="items-center"]
+    > div[class~="opacity-0"]
+    button {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* --- Sport tab -------------------------------------------------------- */
+
+  /* The run table becomes a list of cards. */
+  html[data-mobile="on"] [data-view="sport"] table {
+    display: block;
+    width: 100%;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] thead {
+    display: none;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px 8px;
+    padding: 12px;
+    border: 1px solid var(--ui-border);
+    border-radius: 12px;
+    background: var(--ui-surface-2);
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td {
+    display: block;
+    border: 0;
+    padding: 0 !important;
+    white-space: normal !important;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(1) {
+    grid-row: 1;
+    grid-column: 1 / 3;
+    font-size: 12px;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(8) {
+    grid-row: 1;
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(9) {
+    grid-row: 1;
+    grid-column: 4;
+    justify-self: end;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(2) {
+    grid-row: 2;
+    grid-column: 1 / 3;
+    color: var(--ui-text);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(2)::before {
+    content: "km ";
+    color: var(--ui-text-3);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(4) {
+    grid-row: 2;
+    grid-column: 3 / 5;
+    justify-self: end;
+    align-self: center;
+    border-radius: 9999px;
+    background: rgba(var(--ui-accent-rgb), 0.1);
+    padding: 4px 9px !important;
+    color: var(--ui-accent);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(4)::before {
+    content: "Pace ";
+    color: var(--ui-text-3);
+    font-size: 9px;
+    font-weight: 600;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(3),
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(5),
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(6),
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(7) {
+    overflow: hidden;
+    border-radius: 7px;
+    background: rgba(var(--ui-accent-rgb), 0.07);
+    padding: 5px 8px !important;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap !important;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(3) {
+    grid-row: 3;
+    grid-column: 1 / 3;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(5) {
+    grid-row: 3;
+    grid-column: 3 / 5;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(6) {
+    grid-row: 4;
+    grid-column: 1 / 3;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(7) {
+    grid-row: 4;
+    grid-column: 3 / 5;
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(3)::before {
+    content: "Time ";
+    color: var(--ui-text-3);
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(5)::before {
+    content: "Where ";
+    color: var(--ui-text-3);
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(6)::before {
+    content: "°C ";
+    color: var(--ui-text-3);
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(7)::before {
+    content: "Effort ";
+    color: var(--ui-text-3);
+  }
+
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(8) button,
+  html[data-mobile="on"] [data-view="sport"] tbody > tr > td:nth-child(9) button {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Expanded cardio details. */
+  html[data-mobile="on"] [data-view="sport"] tbody > tr:has(> td[colspan]) {
+    display: block;
+    padding: 0;
+    border: 1px solid var(--ui-border);
+    border-radius: 12px;
+    background: var(--ui-surface-2);
+  }
+
+  /* Slightly larger mode and period toggles. */
+  html[data-mobile="on"] [data-view="sport"] div[class~="rounded-xl"][class~="p-1"] > button,
+  html[data-mobile="on"] [data-view="sport"] div[class~="rounded-full"][class~="p-0.5"] > button {
+    min-height: 36px;
+  }
+
+  /* Push-up history: rows may wrap. */
+  html[data-mobile="on"] [data-view="sport"] div[class~="justify-between"][class~="rounded-lg"] {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="sport"]
+    div[class~="min-w-0"][class~="items-center"][class~="gap-3"] {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+
+  /* "Distance & speed" is redundant with the run cards on mobile and
+     too cluttered with two y-axes.
+
+     Important: do not select via the Recharts legend. That caused a
+     ResizeObserver loop (card hidden → chart 0 px → legend gone →
+     selector no longer matches → card shown → …). Instead, hide the
+     chart card by its stable position right after the run table. In
+     push-up mode there is no table, so the push-up chart is untouched. */
+  html[data-mobile="on"]
+    [data-view="sport"]
+    [class~="backdrop-blur-2xl"]:has(table)
+    + [class~="backdrop-blur-2xl"],
+  html[data-mobile="on"]
+    [data-view="sport"]
+    [class~="backdrop-blur-2xl"]:has([class~="h-48"][class~="animate-pulse"]) {
+    display: none;
+  }
+
+  /* --- Supplements tab -------------------------------------------------- */
+
+  html[data-mobile="on"] [data-view="supplements"] button[class~="h-[22px]"][class~="w-[22px]"] {
+    width: 28px;
+    height: 28px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="supplements"]
+    div[class~="flex"][class~="gap-1.5"]:has(> button[class~="h-8"]) {
+    gap: 4px;
+  }
+
+  html[data-mobile="on"] [data-view="supplements"] button[class~="h-8"][class~="w-8"] {
+    width: 38px;
+    height: 38px;
+  }
+
+  html[data-mobile="on"] [data-view="supplements"] button[class~="w-full"][class~="items-center"] {
+    min-height: 48px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="supplements"]
+    div[class~="items-center"][class~="gap-3"]
+    > button:last-child {
+    display: inline-flex;
+    min-width: 40px;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* backdrop-filter would pin position:fixed to the sheet anchor. */
+  html[data-mobile="on"]
+    [class~="backdrop-blur-2xl"]:has(div[class~="absolute"][class~="bottom-full"][class~="z-30"]) {
+    filter: none;
+    -webkit-filter: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Time window picker as a bottom sheet. */
+  html[data-mobile="on"]
+    [data-view="supplements"]
+    div[class~="absolute"][class~="bottom-full"][class~="z-30"] {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 45;
+    margin: 0;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -18px 48px rgba(0, 0, 0, 0.55);
+  }
+
+  html[data-mobile="on"]
+    [data-view="supplements"]
+    div[class~="absolute"][class~="bottom-full"][class~="z-30"]
+    button {
+    min-height: 48px;
+  }
+
+  /* --- Performance tab -------------------------------------------------- */
+
+  html[data-mobile="on"] [data-view="performance"] .recharts-responsive-container {
+    height: 190px !important;
+  }
+
+  /* Signals are shown in the "Why?" panel, do not repeat them at the top. */
+  html[data-mobile="on"]
+    [data-view="performance"]
+    div[class~="flex"][class~="items-center"][class~="justify-between"]
+    > div[class~="flex-wrap"][class~="gap-x-3"] {
+    display: none;
+  }
+
+  html[data-mobile="on"]
+    [data-view="performance"]
+    [class~="mb-2"][class~="flex"][class~="items-start"][class~="justify-between"] {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  /* "Why?" rows wrap instead of using fixed column widths. */
+  html[data-mobile="on"] [data-view="performance"] [class~="w-28"],
+  html[data-mobile="on"] [data-view="performance"] [class~="w-16"],
+  html[data-mobile="on"] [data-view="performance"] [class~="w-24"],
+  html[data-mobile="on"] [data-view="performance"] [class~="w-32"] {
+    width: auto !important;
+  }
+
+  html[data-mobile="on"]
+    [data-view="performance"]
+    div[class~="space-y-4"][class~="rounded-lg"][class~="p-3"]
+    [class~="space-y-1.5"]
+    > div {
+    flex-wrap: wrap;
+    gap: 2px 8px;
+  }
+
+  html[data-mobile="on"]
+    [data-view="performance"]
+    div[class~="space-y-4"][class~="rounded-lg"][class~="p-3"]
+    [class~="space-y-1.5"]
+    > div
+    > span:last-child {
+    flex: 1 0 100%;
+  }
+
+  /* Hypnogram: every other hour is enough on narrow screens. */
+  html[data-mobile="on"] [data-view="performance"] .relative.mt-1.h-4 > span:nth-child(even) {
+    display: none;
+  }
+
+  /* Metric lists (extra sleep data and readiness) in one column:
+     at 360 px two columns were too narrow and values wrapped mid-text. */
+  html[data-mobile="on"] [data-view="performance"] .mt-5.flex.flex-wrap.gap-x-6 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  html[data-mobile="on"] [data-view="performance"] .mt-5.flex.flex-wrap.gap-x-6 > div {
+    flex-wrap: wrap;
+    column-gap: 8px;
+    row-gap: 2px;
+  }
+
+  html[data-mobile="on"] [data-view="performance"] .mt-5.flex.flex-wrap.gap-x-6 > div > span {
+    white-space: nowrap;
+  }
+
+  /* --- Body tab --------------------------------------------------------- */
+
+  /* The profile row may wrap. */
+  html[data-mobile="on"]
+    [data-view="body"]
+    div[class~="flex"][class~="items-baseline"][class~="gap-2"] {
+    flex-wrap: wrap;
+    gap: 2px 8px;
+  }
+
+  /* Measurements: the table becomes a list of cards. */
+  html[data-mobile="on"] [data-view="body"] table {
+    display: block;
+    width: 100%;
+  }
+
+  html[data-mobile="on"] [data-view="body"] thead {
+    display: none;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 10px;
+    padding: 12px;
+    border: 1px solid var(--ui-border);
+    border-radius: 12px;
+    background: var(--ui-surface-2);
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td {
+    display: block;
+    border: 0;
+    padding: 0 !important;
+    white-space: normal !important;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(1) {
+    grid-row: 1;
+    grid-column: 1;
+    font-size: 12px;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(8) {
+    grid-row: 1;
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(2) {
+    grid-row: 2;
+    grid-column: 1;
+    color: var(--ui-text);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(2)::before {
+    content: "Weight ";
+    color: var(--ui-text-3);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(5) {
+    grid-row: 2;
+    grid-column: 2;
+    justify-self: end;
+    align-self: center;
+    border-radius: 9999px;
+    border: 1px solid var(--ui-border);
+    padding: 4px 9px !important;
+    font-size: 12px;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(5)::before {
+    content: "BMI ";
+    color: var(--ui-text-3);
+    font-size: 9px;
+    font-weight: 600;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(3),
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(4),
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(6),
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(7) {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+    border-radius: 7px;
+    background: rgba(var(--ui-accent-rgb), 0.07);
+    padding: 5px 8px !important;
+    font-size: 11px;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(3) {
+    grid-row: 3;
+    grid-column: 1;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(4) {
+    grid-row: 3;
+    grid-column: 2;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(6) {
+    grid-row: 4;
+    grid-column: 1;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(7) {
+    grid-row: 4;
+    grid-column: 2;
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(3)::before {
+    content: "Δ";
+    color: var(--ui-text-3);
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(4)::before {
+    content: "Δ 12M";
+    color: var(--ui-text-3);
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(6)::before {
+    content: "Body fat";
+    color: var(--ui-text-3);
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(7)::before {
+    content: "Muscle";
+    color: var(--ui-text-3);
+  }
+
+  html[data-mobile="on"] [data-view="body"] tbody > tr > td:nth-child(8) button {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* "Weight & body fat" is hidden completely on mobile.
+     The selector intentionally does not depend on the chart legend but on
+     the always present ResponsiveContainer wrapper or the loading skeleton.
+     This avoids a ResizeObserver loop. */
+  html[data-mobile="on"]
+    [data-view="body"]
+    [class~="backdrop-blur-2xl"]:has(.recharts-responsive-container),
+  html[data-mobile="on"]
+    [data-view="body"]
+    [class~="backdrop-blur-2xl"]:has([class~="h-48"][class~="animate-pulse"]) {
+    display: none;
+  }
+
+  /* --- AI tab ----------------------------------------------------------- */
+
+  /* Use the available height instead of a fixed 500 px. */
+  html[data-mobile="on"] [data-view="ai"] [class~="h-[500px]"] {
+    height: calc(100dvh - 220px) !important;
+    min-height: 300px;
+  }
+}

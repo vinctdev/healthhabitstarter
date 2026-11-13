@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+docker-compose.override.y*ml
+*.dump
+node_modules/
+__pycache__/
+*.pyc
+*.tsbuildinfo
+backend/dev.db
+backend/.venv/
+*.tsbuildinfo
+frontend/screenshots/
+.vscode
+frontend/dist/
+frontend/screenshot-fonts/
